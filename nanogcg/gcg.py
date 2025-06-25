@@ -61,6 +61,7 @@ class GCGConfig:
     seed: int = None
     verbosity: str = "INFO"
     probe_sampling_config: Optional[ProbeSamplingConfig] = None
+    continue_final_message: bool = False
 
 
 @dataclass
@@ -248,6 +249,8 @@ class GCG:
             messages[-1]["content"] = messages[-1]["content"] + "{optim_str}"
 
         template = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        if config.continue_final_message:
+            template = tokenizer.apply_chat_template(messages, tokenize=False, continue_final_message=True)
         # Remove the BOS token -- this will get added when tokenizing, if necessary
         if tokenizer.bos_token and template.startswith(tokenizer.bos_token):
             template = template.replace(tokenizer.bos_token, "")
